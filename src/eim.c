@@ -168,8 +168,13 @@ INPUT_RETURN_VALUE FcitxChewingDoInput(void* arg, FcitxKeySym sym, unsigned int 
     } else if (FcitxHotkeyIsHotKey(sym, state, FCITX_TAB)) {
         chewing_handle_Tab(ctx);
     } else if (FcitxHotkeyIsHotKeySimple(sym, state)) {
+        /* hsu's keyboard: show candidates when 'q' is pressed */
         int scan_code = (int) sym & 0xff;
-        chewing_handle_Default(ctx, scan_code);
+        if (scan_code == 'q'
+                && !strcmp(builtin_keymaps[chewing->config.layout], "KB_HSU"))
+            chewing_handle_Down(ctx);
+        else
+            chewing_handle_Default(ctx, scan_code);
     } else if (FcitxHotkeyIsHotKey(sym, state, FCITX_BACKSPACE)) {
         char * zuin_str = chewing_zuin_String(ctx, &zuin_len);
         chewing_free(zuin_str);
