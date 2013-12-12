@@ -217,8 +217,35 @@ INPUT_RETURN_VALUE FcitxChewingDoInput(void* arg, FcitxKeySym sym, unsigned int 
         chewing_handle_ShiftRight(ctx);
     } else if (FcitxHotkeyIsHotKey(sym, state, FCITX_ENTER)) {
         chewing_handle_Enter(ctx);
-    } else if (state == FcitxKeyState_Ctrl && FcitxHotkeyIsHotKeyDigit(sym, FcitxKeyState_None)) {
-        chewing_handle_CtrlNum(ctx, sym);
+    } else if (state == FcitxKeyState_Ctrl) {
+        if (FcitxHotkeyIsHotKeyDigit(sym, FcitxKeyState_None))
+            chewing_handle_CtrlNum(ctx, sym);
+        else { /* movement hotkeys */
+            const int scan_code = sym & 0xff;
+            switch (scan_code) {
+                case 'F': // Right
+                    chewing_handle_Right(ctx); break;
+                case 'B': // Left
+                    chewing_handle_Left(ctx); break;
+                case 'N': // Down
+                    chewing_handle_Down(ctx); break;
+                case 'P': // Up
+                    chewing_handle_Up(ctx); break;
+                case 'H': // Backspace
+                    chewing_handle_Backspace(ctx); break;
+                case 'D': // Delete
+                    chewing_handle_Del(ctx); break;
+                case 'A': // Home
+                    chewing_handle_Home(ctx); break;
+                case 'E': // End
+                    chewing_handle_End(ctx); break;
+                case '[': // Esc
+                case 'C':
+                    chewing_handle_Esc(ctx); break;
+                default:
+                    return IRV_TO_PROCESS;
+            }
+        }
     } else {
         // to do: more chewing_handle
         return IRV_TO_PROCESS;
